@@ -123,3 +123,42 @@ func (ie *InternalError) Error() string {
 func (ie *InternalError) Unwrap() error {
 	return ie.err
 }
+
+type VerificationError struct {
+	message string
+	err     error
+}
+
+func NewVerificationError(message string, err error) *VerificationError {
+	return &VerificationError{
+		message: message,
+		err:     err,
+	}
+}
+func (ve *VerificationError) Error() string {
+	return fmt.Sprintf("%s: %s", ve.message, ve.err)
+}
+
+func (ve *VerificationError) Unwrap() error {
+	return ve.err
+}
+
+type SignatureError struct {
+	message string
+	err     error
+}
+
+func NewSignatureError(message string, err error) *SignatureError {
+	return &SignatureError{
+		message: message,
+		err:     err,
+	}
+}
+
+func (se *SignatureError) Error() string {
+	return fmt.Sprintf("%s: %s", se.message, se.err)
+}
+
+func (se *SignatureError) Unwrap() error {
+	return se.err
+}
