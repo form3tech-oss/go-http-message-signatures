@@ -1,6 +1,6 @@
 // Package httpsignatures provides tools to sign HTTP requests as per https://www.ietf.org/archive/id/draft-cavage-http-signatures-12.txt
 
-// Please note the version of the draft this is based on as there are varying implementations which are incompatible.
+// Please note the version of the draft this is based on as there are varying versions which are incompatible.
 
 // Example usage
 

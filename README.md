@@ -1,6 +1,8 @@
 # Go HTTP Message Signatures
 
-Go implementation of the [HTTP Message Signatures RFC](https://www.ietf.org/archive/id/draft-cavage-http-signatures-12.txt). 
+Go implementation of the [draft HTTP Message Signatures RFC](https://www.ietf.org/archive/id/draft-cavage-http-signatures-12.txt). 
+
+**Please note the version of the draft this is based on as there are varying versions which are incompatible.**
 
 ## Usage
 
