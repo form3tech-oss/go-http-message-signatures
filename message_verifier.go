@@ -137,7 +137,7 @@ func (ma *messageAttributes) verifyDigest() error {
 	return nil
 }
 
-// validateRequiredHeaders
+// validateRequiredHeaders ensures all required headers exist in the signature headers.
 func (ma *messageAttributes) validateRequiredHeaders(requiredHeaders []string) error {
 	headers := map[string]struct{}{}
 
@@ -211,11 +211,12 @@ func determineSignature(headers http.Header) (string, error) {
 			strings.Count(authorizationHeader, signatureHeaderSignatureKey) == 1
 	}
 
-	if validSignatureHeader && validAuthorizationHeader {
+	switch {
+	case validSignatureHeader && validAuthorizationHeader:
 		return "", NewValidationError("both Signature and Authorization headers contain signatures, cannot proceed due to ambiguity")
-	} else if validSignatureHeader {
+	case validSignatureHeader:
 		return signatureHeader, nil
-	} else if validAuthorizationHeader {
+	case validAuthorizationHeader:
 		return authorizationHeader, nil
 	}
 

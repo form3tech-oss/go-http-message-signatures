@@ -27,7 +27,13 @@ func newVerifier(publicKey crypto.PublicKey, algo crypto.Hash, signingAlgo strin
 		}
 
 		if cryptoHash.Name != signingHash {
-			return nil, NewValidationError(fmt.Sprintf("hashing algorithm provided in signature (%s) did not match expected algorithm (%s)", signingHash, cryptoHash.Name))
+			return nil, NewValidationError(
+				fmt.Sprintf(
+					"hashing algorithm provided in signature (%s) did not match expected algorithm (%s)",
+					signingHash,
+					cryptoHash.Name,
+				),
+			)
 		}
 	}
 

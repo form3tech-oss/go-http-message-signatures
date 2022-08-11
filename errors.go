@@ -135,6 +135,7 @@ func NewVerificationError(message string, err error) *VerificationError {
 		err:     err,
 	}
 }
+
 func (ve *VerificationError) Error() string {
 	return fmt.Sprintf("%s: %s", ve.message, ve.err)
 }
