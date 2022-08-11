@@ -139,6 +139,11 @@ func (ma *messageAttributes) verifyDigest() error {
 
 // validateRequiredHeaders ensures all required headers exist in the signature headers.
 func (ma *messageAttributes) validateRequiredHeaders(requiredHeaders []string) error {
+	// if there are no required headers, don't do anything.
+	if len(requiredHeaders) == 0 {
+		return nil
+	}
+
 	headers := map[string]struct{}{}
 
 	for _, header := range ma.signatureHeaders {

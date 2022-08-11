@@ -52,3 +52,43 @@ if err != nil {
     ...
 }
 ```
+
+### Verifying
+
+A `MessageVerifier` can be given a list of header that a required in the message signature and a function that provides a public key and an optional expected hashing algorithm for a given `keyId`.
+
+```go
+func keyIDFetcher(keyID string) (crypto.PublicKey, crypto.Hash, error) {
+    keyBytes, err := os.ReadFile("path/to/public.key")
+    if err != nil {
+        ...
+    }
+
+    decoded, err := pem.Decode(keyBytes)
+    if err != nil {
+        ...
+    }
+
+    publicKey, err := x509.ParsePKIXPrivateKey(decoded.Bytes)
+    if err != nil {
+        ...
+    }
+
+    rsaPK, ok := publicKey.(*rsa.PublicKey)
+    if !ok {
+        ...
+    }
+    return rsaPK, 0, nil
+}
+
+verifier := NewMessageVerifier(nil, keyIDFetcher)
+```
+
+Once you have a `MessageVerifier`, you can use it in a to verify an HTTP request. If the signature on the request contains the `digest` header, then the digest will be validated against the request `body`. If any `requiredHeaders` were provided, the signature headers will be validated against these. The `keyId` is then extracted and the signature is verified using the public key and optional hashing algorithm returned by the function provided to `MessageVerifier`.
+
+```go
+err := verifier.VerifyRequest(req)
+if err != nil {
+    ...
+}
+```
