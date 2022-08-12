@@ -19,7 +19,7 @@ test:
 .PHONY: fuzz
 fuzz:
 	@echo "==> Executing fuzz tests..."
-	@bash -e -o pipefail -c 'go test -list=. | grep "Fuzz" | xargs -n1 -I@ sh -c "echo \"==> Running @...\"; go test -fuzztime $(TIME) -fuzz @"'
+	@bash -e -o pipefail -c 'go test -list=. | grep "^Fuzz" | xargs -n1 -I@ sh -c "echo \"==> Running @...\"; go test -fuzztime $(TIME) -fuzz @"'
 
 .PHONY: lint
 lint: tools/golangci-lint

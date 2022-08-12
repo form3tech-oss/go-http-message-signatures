@@ -39,11 +39,15 @@ type messageAttributes struct {
 type KeyIDMetadata func(keyID string) (crypto.PublicKey, crypto.Hash, error)
 
 // NewMessageVerifier creates a new instance of MessageVerifier.
-func NewMessageVerifier(requiredHeaders []string, keyIDMetadataFn KeyIDMetadata) *MessageVerifier {
+func NewMessageVerifier(keyIDMetadataFn KeyIDMetadata) *MessageVerifier {
 	return &MessageVerifier{
-		requiredHeaders: requiredHeaders,
 		keyIDMetadataFn: keyIDMetadataFn,
 	}
+}
+
+func (mv *MessageVerifier) WithRequiredHeaders(headers []string) *MessageVerifier {
+	mv.requiredHeaders = headers
+	return mv
 }
 
 // Verify verifies the signature on the request. If the body is not empty and
