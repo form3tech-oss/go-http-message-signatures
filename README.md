@@ -55,7 +55,7 @@ if err != nil {
 
 ### Verifying
 
-A `MessageVerifier` can be given a list of header that a required in the message signature and a function that provides a public key and an optional expected hashing algorithm for a given `keyId`.
+A `MessageVerifier` can be given a list of headers that are required in the message signature and a function that provides a public key and an optional expected hashing algorithm for a given `keyId`.
 
 ```go
 func keyIDFetcher(keyID string) (crypto.PublicKey, crypto.Hash, error) {
@@ -69,7 +69,7 @@ func keyIDFetcher(keyID string) (crypto.PublicKey, crypto.Hash, error) {
         ...
     }
 
-    publicKey, err := x509.ParsePKIXPrivateKey(decoded.Bytes)
+    publicKey, err := x509.ParsePKIXPublicKey(decoded.Bytes)
     if err != nil {
         ...
     }

@@ -181,31 +181,7 @@ func Test_VerifyRequest(t *testing.T) {
 			errorExpected:   true,
 		},
 		{
-			title: "invalid digest",
-			req: &http.Request{
-				Method: "POST",
-				URL: &url.URL{
-					Path: "/example",
-				},
-				Header: http.Header{
-					"Date":   {"Fri, 29 Jul 2022 13:23:35 GMT"},
-					"Host":   {"example.org"},
-					"Digest": {"SHA-256=not_valid"},
-				},
-				Body: io.NopCloser(bytes.NewBuffer([]byte("test"))),
-			},
-			signature: `keyId="abc",algorithm="rsa-sha256",headers="(request-target) date host digest",signature="jFpHNN2jW4MTZnZGxm38qx6TqLJCeHEnKW7NhujN6VL7mFbZt6MZ1UcJS/YUYKLnFw1PBbvcOYjTarf2fCtIsCrHKCcYaSaK33L9HrcqoDH/ykOCd57TcNggrFCiqV4sOdjXgFj8Bi7fJbK0QCbIKv03YxBAUiUHArnTP6ANpRiAIyzQxGjGTFjgd2ENgU7Luf346xHdblbwecvJvabmN63mf9a/WFZ21JLERLH2PtAlcbmK43trIjnvHwGeSbi7Pd0xpiXXlhyG+iIdLqbszKjGvYd2cdK4nSfjJhhslA8KS8q5DVp0kJLZKfTbtAVI3mrmVyRAH0ZAa7SXqZQlcQ=="`,
-			requiredHeaders: []string{
-				"(request-target)",
-				"date",
-				"host",
-				"digest",
-			},
-			keyIDMetadataFn: getRSAPublicKey(0, nil),
-			errorExpected:   true,
-		},
-		{
-			title: "invalid digest",
+			title: "digest is not valid for request body",
 			req: &http.Request{
 				Method: "POST",
 				URL: &url.URL{
@@ -541,7 +517,7 @@ func Test_VerifyRequest(t *testing.T) {
 			errorExpected:   true,
 		},
 		{
-			title: "invalid digest",
+			title: "digest does not contain an algorithm",
 			req: &http.Request{
 				Method: "POST",
 				URL: &url.URL{
@@ -656,6 +632,56 @@ func Test_extractSignature(t *testing.T) {
 			expectedSignatureHeaders: []string{"a", "b", "c"},
 			expectedSignature:        "sig",
 			errorExpected:            false,
+		},
+		{
+			title: "Authorization header signature extracted with attributes in different order",
+			headers: http.Header{
+				"Authorization": {`Signature signature="sig",keyId="id",headers="a b c",algorithm="algo"`},
+			},
+			expectedKeyID:            "id",
+			expectedAlgorithm:        "algo",
+			expectedSignatureHeaders: []string{"a", "b", "c"},
+			expectedSignature:        "sig",
+			errorExpected:            false,
+		},
+		{
+			title: "Authorization header no space between type and start of value",
+			headers: http.Header{
+				"Authorization": {`Signaturesignature="sig",keyId="id",headers="a b c",algorithm="algo"`},
+			},
+			errorExpected: true,
+		},
+		{
+			title: "Signature header signature extracted with attributes in different order",
+			headers: http.Header{
+				"Signature": {`signature="sig",keyId="id",headers="a b c",algorithm="algo"`},
+			},
+			expectedKeyID:            "id",
+			expectedAlgorithm:        "algo",
+			expectedSignatureHeaders: []string{"a", "b", "c"},
+			expectedSignature:        "sig",
+			errorExpected:            false,
+		},
+		{
+			title: "Authorization header fails when wrong type",
+			headers: http.Header{
+				"Authorization": {`Bearer keyId="id",algorithm="algo",headers="a b c",signature="sig"`},
+			},
+			errorExpected: true,
+		},
+		{
+			title: "Authorization header malformed signature with correct attributes fails",
+			headers: http.Header{
+				"Authorization": {`Signature signature="sig"keyId="id"headers="a b c"algorithm="algo"`},
+			},
+			errorExpected: true,
+		},
+		{
+			title: "Signature header malformed signature with correct attributes fails",
+			headers: http.Header{
+				"Signature": {`signature="sig"keyId="id"headers="a b c"algorithm="algo"`},
+			},
+			errorExpected: true,
 		},
 		{
 			title: "Authorization and Signature headers error with signature",

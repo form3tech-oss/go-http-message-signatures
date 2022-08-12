@@ -14,10 +14,10 @@ const (
 )
 
 var (
-	keyIDRegex     = regexp.MustCompile(`keyId="([^"]+)"`)
-	algorithmRegex = regexp.MustCompile(`algorithm="([^"]+)"`)
-	headersRegex   = regexp.MustCompile(`headers="([^"]+)"`)
-	signatureRegex = regexp.MustCompile(`signature="([^"]+)"`)
+	keyIDRegex     = regexp.MustCompile(`(?:^| |(?:",))keyId="([^"]+)"`)
+	algorithmRegex = regexp.MustCompile(`(?:^| |(?:",))algorithm="([^"]+)"`)
+	headersRegex   = regexp.MustCompile(`(?:^| |(?:",))headers="([^"]+)"`)
+	signatureRegex = regexp.MustCompile(`(?:^| |(?:",))signature="([^"]+)"`)
 )
 
 // MessageVerifier verifies the signatures on messages.
@@ -35,7 +35,7 @@ type messageAttributes struct {
 }
 
 // KeyIDMetadata function type for providing a public key and optional expected hashing algorithm
-// from a keyId in a signature.
+// from a keyId in a signature. If hashing algorithm is not required, return 0.
 type KeyIDMetadata func(keyID string) (crypto.PublicKey, crypto.Hash, error)
 
 // NewMessageVerifier creates a new instance of MessageVerifier.
@@ -210,7 +210,8 @@ func determineSignature(headers http.Header) (string, error) {
 
 	authorizationHeader := headers.Get(string(Authorization))
 	if authorizationHeader != "" {
-		validAuthorizationHeader = strings.Count(authorizationHeader, signatureHeaderKeyIDKey) == 1 &&
+		validAuthorizationHeader = strings.HasPrefix(authorizationHeader, authorizationHeaderPrefix) &&
+			strings.Count(authorizationHeader, signatureHeaderKeyIDKey) == 1 &&
 			strings.Count(authorizationHeader, signatureHeaderAlgorithmKey) == 1 &&
 			strings.Count(authorizationHeader, signatureHeaderHeadersKey) == 1 &&
 			strings.Count(authorizationHeader, signatureHeaderSignatureKey) == 1
