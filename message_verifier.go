@@ -237,28 +237,28 @@ func determineSignature(headers http.Header) (string, error) {
 // If any part is not present in the correct format, an error is returned.
 func parseSignatureString(signatureString string) (keyID, algorithm string, headers []string, signature string, err error) {
 	keyIDMatch := keyIDRegex.FindStringSubmatch(signatureString)
-	if keyIDMatch == nil || len(keyIDMatch) == 1 {
+	if len(keyIDMatch) < 2 {
 		err = NewDataError("keyId could not be found in signature string", nil)
 		return
 	}
 	keyID = keyIDMatch[1]
 
 	algorithmMatch := algorithmRegex.FindStringSubmatch(signatureString)
-	if algorithmMatch == nil {
+	if len(algorithmMatch) < 2 {
 		err = NewDataError("algorithm could not be found in signature string", nil)
 		return
 	}
 	algorithm = algorithmMatch[1]
 
 	headersMatch := headersRegex.FindStringSubmatch(signatureString)
-	if headersMatch == nil {
+	if len(headersMatch) < 2 {
 		err = NewDataError("headers could not be found in signature string", nil)
 		return
 	}
 	headers = strings.Split(headersMatch[1], " ")
 
 	signatureMatch := signatureRegex.FindStringSubmatch(signatureString)
-	if signatureMatch == nil {
+	if len(signatureMatch) < 2 {
 		err = NewDataError("signature could not be found in signature string", nil)
 		return
 	}
