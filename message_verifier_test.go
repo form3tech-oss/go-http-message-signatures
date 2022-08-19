@@ -441,6 +441,25 @@ func Test_VerifyRequest(t *testing.T) {
 			keyIDMetadataFn: getRSAPublicKey(0, nil),
 			errorExpected:   true,
 		},
+		{
+			title: "no host header",
+			req: &http.Request{
+				Method: "POST",
+				URL: &url.URL{
+					Path: "/example",
+				},
+				Host: "example.org",
+				Header: http.Header{
+					"Date":   {"Fri, 29 Jul 2022 13:23:35 GMT"},
+					"Digest": {"SHA-256=n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg="},
+				},
+				Body: io.NopCloser(bytes.NewBuffer([]byte("test"))),
+			},
+			// signature generated with (echo -n "(request-target): post /example\ndate: Fri, 29 Jul 2022 13:23:35 GMT\nhost: example.org\ndigest: SHA-256=n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=" | openssl dgst -sha256 -sign test-certificates/rsa.pem | openssl base64)
+			signature:       `keyId="abc",algorithm="rsa-sha256",headers="(request-target) date host digest",signature="jFpHNN2jW4MTZnZGxm38qx6TqLJCeHEnKW7NhujN6VL7mFbZt6MZ1UcJS/YUYKLnFw1PBbvcOYjTarf2fCtIsCrHKCcYaSaK33L9HrcqoDH/ykOCd57TcNggrFCiqV4sOdjXgFj8Bi7fJbK0QCbIKv03YxBAUiUHArnTP6ANpRiAIyzQxGjGTFjgd2ENgU7Luf346xHdblbwecvJvabmN63mf9a/WFZ21JLERLH2PtAlcbmK43trIjnvHwGeSbi7Pd0xpiXXlhyG+iIdLqbszKjGvYd2cdK4nSfjJhhslA8KS8q5DVp0kJLZKfTbtAVI3mrmVyRAH0ZAa7SXqZQlcQ=="`,
+			keyIDMetadataFn: getRSAPublicKey(0, nil),
+			errorExpected:   false,
+		},
 	}
 
 	for _, tc := range testCases {

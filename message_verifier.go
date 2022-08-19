@@ -11,6 +11,7 @@ import (
 
 const (
 	digestSignatureStringHeader = "digest"
+	hostHeader                  = "Host"
 )
 
 var (
@@ -53,6 +54,8 @@ func (mv *MessageVerifier) WithRequiredHeaders(headers []string) *MessageVerifie
 // Verify verifies the signature on the request. If the body is not empty and
 // the signature contains `digest`, the digest is also validated against the body.
 func (mv *MessageVerifier) VerifyRequest(req *http.Request) error {
+	ensureRequestHostHeader(req)
+
 	ma := &messageAttributes{
 		req: req,
 	}
@@ -182,6 +185,15 @@ func (ma *messageAttributes) verifySignature(verifier Verifier) error {
 	}
 
 	return verifier.Verify(signatureSum, signatureString)
+}
+
+// ensureRequestHostHeader adds a Host header to the request if it isn't already there. This is
+// required as the http library documentation specifies 'For incoming requests, the Host header
+// is promoted to the Request.Host field and removed from the Header map.'. https://pkg.go.dev/net/http#Request
+func ensureRequestHostHeader(req *http.Request) {
+	if req.Header.Get(hostHeader) == "" {
+		req.Header.Set(hostHeader, req.Host)
+	}
 }
 
 // getHashingAlgorithmByDigestKey finds the hashing algorithm for the given key in a digest header value.
