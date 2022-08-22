@@ -103,7 +103,11 @@ func (ms *MessageSigner) SignRequest(req *http.Request, signatureHeaders []strin
 	}
 
 	body, err := readBody(req)
-	if err == nil && len(body) != 0 {
+	if err != nil {
+		return nil, NewDataError("failed to read request body", err)
+	}
+
+	if len(body) != 0 {
 		digest, err := generateDigest(ms.algo.FetchHasher(), body)
 		if err != nil {
 			return nil, err
