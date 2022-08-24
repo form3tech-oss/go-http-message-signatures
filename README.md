@@ -84,7 +84,7 @@ func keyIDFetcher(keyID string) (crypto.PublicKey, crypto.Hash, error) {
 verifier := NewMessageVerifier(nil, keyIDFetcher)
 ```
 
-Once you have a `MessageVerifier`, you can use it in a to verify an HTTP request. If the signature on the request contains the `digest` header, then the digest will be validated against the request `body`. If any `requiredHeaders` were provided, the signature headers will be validated against these. The `keyId` is then extracted and the signature is verified using the public key and optional hashing algorithm returned by the function provided to `MessageVerifier`.
+Once you have a `MessageVerifier`, you can use it to verify an HTTP request. If the signature on the request contains the `digest` header, then the digest will be validated against the request `body`. If any `requiredHeaders` were provided, the signature headers will be validated against these. The `keyId` is then extracted and the signature is verified using the public key and optional hashing algorithm returned by the function provided to `MessageVerifier`.
 
 ```go
 err := verifier.VerifyRequest(req)
