@@ -55,7 +55,7 @@ type Verifier interface {
 	Verify(signature, content []byte) error
 }
 
-// RSAVerifier implements Veriifier interface and uses RSA private key to sign content.
+// RSAVerifier implements Verifier interface and uses RSA private key to sign content.
 type RSAVerifier struct {
 	// publicKey is the key used to sign the data.
 	publicKey *rsa.PublicKey
