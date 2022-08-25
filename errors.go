@@ -123,3 +123,45 @@ func (ie *InternalError) Error() string {
 func (ie *InternalError) Unwrap() error {
 	return ie.err
 }
+
+type VerificationError struct {
+	message string
+	err     error
+}
+
+// VerificationError is an error encountered when attempting to verify a signature.
+func NewVerificationError(message string, err error) *VerificationError {
+	return &VerificationError{
+		message: message,
+		err:     err,
+	}
+}
+
+func (ve *VerificationError) Error() string {
+	return fmt.Sprintf("%s: %s", ve.message, ve.err)
+}
+
+func (ve *VerificationError) Unwrap() error {
+	return ve.err
+}
+
+type SignatureError struct {
+	message string
+	err     error
+}
+
+// NewSignatureError is an error encountered when the format of the signature is invalid.
+func NewSignatureError(message string, err error) *SignatureError {
+	return &SignatureError{
+		message: message,
+		err:     err,
+	}
+}
+
+func (se *SignatureError) Error() string {
+	return fmt.Sprintf("%s: %s", se.message, se.err)
+}
+
+func (se *SignatureError) Unwrap() error {
+	return se.err
+}
