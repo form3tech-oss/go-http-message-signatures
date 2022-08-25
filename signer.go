@@ -36,7 +36,12 @@ func fetchCryptoHash(algo crypto.Hash) (*HashingAlgorithm, error) {
 	}
 }
 
-// Signer interface describes something that can sign content.
+// Signer is the interface that wraps the basic Sign method.
+//
+// Sign signs given content using rand as a good source of entropy for blinding the signing
+// operation. It returns the generated signature and any error encountered that caused sign
+// to stop early. Sign must return a non-nil error if it cannot properly generate the requested
+// signature. Sign must not modify the slice content, even temporarily.
 type Signer interface {
 	// Sign the given content.
 	Sign(rand io.Reader, content []byte) ([]byte, error)

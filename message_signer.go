@@ -145,7 +145,7 @@ func readBody(req *http.Request) ([]byte, error) {
 	// Close to overwrite
 	err = req.Body.Close()
 	if err != nil {
-		return nil, err
+		return nil, NewInternalError("failed to close request body", err)
 	}
 
 	// write body back, so it can be sent further
@@ -158,7 +158,7 @@ func readBody(req *http.Request) ([]byte, error) {
 func generateDigest(hasher hash.Hash, requestBody []byte) (string, error) {
 	_, err := hasher.Write(requestBody)
 	if err != nil {
-		return "", NewInternalError("error writing digest", err)
+		return "", NewHashingError("error writing digest", err)
 	}
 
 	return base64.StdEncoding.EncodeToString(hasher.Sum(nil)), nil

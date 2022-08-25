@@ -2,6 +2,7 @@ package httpsignatures
 
 import "fmt"
 
+// HashingErrors is an error encountered when attempting to hash content.
 type HashingError struct {
 	message string
 	err     error
@@ -22,6 +23,7 @@ func (he *HashingError) Unwrap() error {
 	return he.err
 }
 
+// SigningError is an error encountered when attempting to sign content.
 type SigningError struct {
 	message string
 	err     error
@@ -42,6 +44,7 @@ func (se *SigningError) Unwrap() error {
 	return se.err
 }
 
+// ValidationError is an error encountered when attempting to validate input data.
 type ValidationError struct {
 	message string
 }
@@ -56,6 +59,8 @@ func (ve *ValidationError) Error() string {
 	return ve.message
 }
 
+// DataError is an error encountered when input data does not contain the correct
+// content or an error is raised attempting to read the data.
 type DataError struct {
 	message string
 	err     error
@@ -76,6 +81,7 @@ func (de *DataError) Unwrap() error {
 	return de.err
 }
 
+// InitialisationError is an error encountered when we fail to initialise a new object.
 type InitialisationError struct {
 	message string
 	err     error
@@ -96,6 +102,8 @@ func (ie *InitialisationError) Unwrap() error {
 	return ie.err
 }
 
+// InternalError is an error that the user can't fix themselves. Such as an error encountered
+// closing a request body.
 type InternalError struct {
 	message string
 	err     error
