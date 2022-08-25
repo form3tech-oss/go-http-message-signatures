@@ -1,0 +1,51 @@
+name: Test Go
+
+on:
+  workflow_call:
+    outputs:
+      tag:
+        description: "The next semantic version tag based on commit messages."
+        value: ${{ jobs.calculate-tag.outputs.tag }}
+
+jobs:
+  calculate-tag:
+    name: "Calculate Semver Tag"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+      - name: Calculate the next SemVer tag
+        id: tag
+        run: |
+          TAG="$(make calculate-next-semver)"
+          echo "::set-output name=tag::$TAG"
+      - name: Check the next tag
+        run: "echo 'This change will result in version: ${{ steps.tag.outputs.tag }}'"
+    outputs:
+      tag: "${{ steps.tag.outputs.tag }}"
+
+  test:
+    name: "Run Go tests"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+      - name: Setup Go
+        uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923 # v3.2.0
+        with:
+          go-version-file: 'go.mod'
+      - name: Run Go tests
+        run: make test
+
+  lint-go:
+    name: "Lint Go"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+      - name: Setup Go
+        uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923 # v3.2.0
+        with:
+          go-version-file: 'go.mod'
+      - name: Lint
+        run: make lint

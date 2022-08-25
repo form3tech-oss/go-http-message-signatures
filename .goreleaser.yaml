@@ -1,0 +1,31 @@
+project_name: go-http-message-signatures
+
+builds:
+  - skip: true
+
+changelog:
+  skip: false
+  use: git
+  sort: asc
+
+  groups:
+    - title: Breaking Changes
+      regexp: "^.*BREAKING CHANGE[(\\w)]*:+.*$"
+      order: 0
+    - title: Features
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 1
+    - title: 'Bug fixes'
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 2
+    - title: 'Enhancements'
+      regexp: "^.*(chore|build|style|refactor|perf|test)[(\\w)]*:+.*$"
+      order: 3
+    - title: Others
+      order: 999
+
+  filters:
+    exclude:
+      - '^docs'
+      - '^ci'
+      - typo
