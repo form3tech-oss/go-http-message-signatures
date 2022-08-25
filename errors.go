@@ -129,6 +129,7 @@ type VerificationError struct {
 	err     error
 }
 
+// VerificationError is an error encountered when attempting to verify a signature.
 func NewVerificationError(message string, err error) *VerificationError {
 	return &VerificationError{
 		message: message,
@@ -149,6 +150,7 @@ type SignatureError struct {
 	err     error
 }
 
+// NewSignatureError is an error encountered when the format of the signature is invalid.
 func NewSignatureError(message string, err error) *SignatureError {
 	return &SignatureError{
 		message: message,

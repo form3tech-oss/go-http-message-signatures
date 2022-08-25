@@ -43,13 +43,19 @@ func newVerifier(publicKey crypto.PublicKey, algo crypto.Hash, signingAlgo strin
 	return verifier(publicKey, getAlgoByName(signingHash))
 }
 
-// Verifier interface describes something that can verify signatures.
+// Verifier is the interface that wraps the basic Verify method.
+//
+// Verify verifies if the signature is valid for the provided content. It returns an error if the
+// signature is invalid or any error encountered that caused the verify to stop early. Verify must
+// not modify the slice data, even temporarily.
+//
+// Implementations must not retain content.
 type Verifier interface {
 	// Verify the given signature against content.
 	Verify(signature, content []byte) error
 }
 
-// RSAVerifier uses RSA private key to sign content.
+// RSAVerifier implements Veriifier interface and uses RSA private key to sign content.
 type RSAVerifier struct {
 	// publicKey is the key used to sign the data.
 	publicKey *rsa.PublicKey
