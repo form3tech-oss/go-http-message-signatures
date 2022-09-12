@@ -6,7 +6,9 @@ Go implementation of the [draft HTTP Message Signatures RFC](https://www.ietf.or
 
 ## Usage
 
-`import "github.com/form3tech-oss/go-http-message-signatures"
+```go
+import "github.com/form3tech-oss/go-http-message-signatures"
+```
 
 ### Signing
 
